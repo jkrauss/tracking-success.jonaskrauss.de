@@ -9,6 +9,42 @@ interface MetricChartProps {
   days: number;
 }
 
+/** "Nice" step size for axis ticks (1-2-5 rule). */
+function getNiceStep(range: number): number {
+  if (range <= 0) return 1;
+  const mag = Math.pow(10, Math.floor(Math.log10(range)));
+  const r = range / mag;
+  if (r <= 1.5) return mag * 0.2;
+  if (r <= 4) return mag * 0.5;
+  if (r <= 8) return mag;
+  return mag * 2;
+}
+
+/** Heuristic Y-axis domain. Bool: [0,1.2]. Percent: [0,100]. Otherwise nice-range with 5% padding. */
+function getYDomain(config: MetricConfig, values: number[]): [number, number] {
+  if (config.metric_type === 'bool') return [0, 1.2];
+  if (values.length === 0) return [0, 10];
+  if (config.unit === '%') return [0, 100];
+
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min;
+
+  if (range === 0) {
+    const pad = Math.max(Math.abs(min) * 0.2, 1);
+    const dec = 1;
+    return [parseFloat((min - pad).toFixed(dec)), parseFloat((max + pad).toFixed(dec))];
+  }
+
+  const padding = range * 0.05;
+  const step = getNiceStep(range);
+  const dec = Math.max(0, -Math.floor(Math.log10(step)));
+  return [
+    parseFloat((Math.floor((min - padding) / step) * step).toFixed(dec)),
+    parseFloat((Math.ceil((max + padding) / step) * step).toFixed(dec)),
+  ];
+}
+
 export function MetricChart({ config, days }: MetricChartProps) {
   const [data, setData] = useState<MetricHistory | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,6 +106,7 @@ export function MetricChart({ config, days }: MetricChartProps) {
             tickLine={false}
             tickFormatter={formatValue}
             width={28}
+            domain={getYDomain(config, chartData.map(d => d.value).filter((v): v is number => v !== null))}
           />
           <Tooltip
             contentStyle={{
