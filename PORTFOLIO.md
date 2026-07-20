@@ -47,34 +47,40 @@ The app follows a clean three-tier architecture:
 **Architecture:**
 
 ```mermaid
-flowchart LR
-    subgraph Frontend ["React Frontend"]
-        direction TB
-        F1["Card-Swipe UI\nSwipe, Input, Animations"]
-        F2["Charts\nRecharts line graphs"]
-        F3["Auth & Settings\nYAML editor"]
+flowchart TD
+    subgraph frontend ["React Frontend"]
+        F1["Card-Swipe UI - Swipe, Input, Animations"]
+        F2["Charts - Recharts line graphs"]
+        F3["Auth & Settings - YAML editor"]
     end
 
-    subgraph Backend ["FastAPI Backend"]
-        direction TB
-        B1["JWT Auth\nRegister, Login, Reset"]
-        B2["Metric API\nCRUD, Streaks, History"]
-        B3["Calculations\nSleep, Fasting, Weight"]
+    subgraph backend ["FastAPI Backend"]
+        B1["JWT Auth - Register, Login, Reset"]
+        B2["Metric API - CRUD, Streaks, History"]
+        B3["Calculations - Sleep, Fasting, Weight"]
     end
 
-    subgraph DB ["PostgreSQL"]
-        direction TB
+    subgraph db ["PostgreSQL"]
         D1[users]
         D2[metric_configs]
         D3[metric_entries]
     end
 
-    Frontend <-->|"REST + JWT"| Backend
-    Backend <-->|"Async SQLAlchemy"| DB
+    frontend <-->|"REST + JWT"| backend
+    backend <-->|"Async SQLAlchemy"| db
 
-    style Frontend fill:#e8f5e9,stroke:#30974e
-    style Backend fill:#e3f2fd,stroke:#1565c0
-    style DB fill:#fce4ec,stroke:#c62828
+    style frontend fill:#0496FF,stroke:#300A6E,color:#FFFFFF
+    style backend fill:#300A6E,stroke:#0496FF,color:#FFFFFF
+    style db fill:#FB5012,stroke:#300A6E,color:#FFFFFF
+    style F1 fill:#EBEBEB,stroke:#0496FF,color:#000000
+    style F2 fill:#EBEBEB,stroke:#0496FF,color:#000000
+    style F3 fill:#EBEBEB,stroke:#0496FF,color:#000000
+    style B1 fill:#EBEBEB,stroke:#300A6E,color:#000000
+    style B2 fill:#EBEBEB,stroke:#300A6E,color:#000000
+    style B3 fill:#EBEBEB,stroke:#300A6E,color:#000000
+    style D1 fill:#FFFFFF,stroke:#FB5012,color:#000000
+    style D2 fill:#FFFFFF,stroke:#FB5012,color:#000000
+    style D3 fill:#FFFFFF,stroke:#FB5012,color:#000000
 ```
 
 ## Tech Stack
