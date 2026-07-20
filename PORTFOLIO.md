@@ -47,47 +47,43 @@ The app follows a clean three-tier architecture:
 **Architecture:**
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#300A6E", "primaryTextColor": "#FFFFFF", "primaryBorderColor": "#0496FF", "lineColor": "#300A6E", "secondaryColor": "#EBEBEB", "tertiaryColor": "#FFFFFF", "fontFamily": "system-ui, sans-serif"}}}%%
 flowchart TD
-    subgraph frontend ["Frontend — React + TypeScript"]
+    subgraph zone_fe ["Frontend — React + TypeScript"]
         direction TB
         F1["Card-Swipe UI — Swipe, Input, Animations"]
         F2["Charts — Recharts line graphs"]
         F3["Auth & Settings — YAML editor"]
     end
 
-    subgraph backend ["Backend — FastAPI"]
+    subgraph zone_be ["Backend — FastAPI"]
         direction TB
         B1["JWT Auth — Register, Login, Reset"]
         B2["Metric API — CRUD, Streaks, History"]
         B3["Calculations — Sleep, Fasting, Weight"]
     end
 
-    subgraph db ["Database — PostgreSQL"]
+    subgraph zone_db ["Database — PostgreSQL"]
         direction TB
         D1[(users)]
         D2[(metric_configs)]
         D3[(metric_entries)]
     end
 
-    frontend <-->|"REST + JWT"| backend
-    backend <-->|"Async SQLAlchemy"| db
+    zone_fe <-->|"REST + JWT"| zone_be
+    zone_be <-->|"Async SQLAlchemy"| zone_db
 
-    classDef frontend fill:#0496FF,stroke:#300A6E,color:#FFFFFF,stroke-width:2px
-    classDef backend fill:#300A6E,stroke:#0496FF,color:#FFFFFF,stroke-width:2px
+    classDef fe fill:#0496FF,stroke:#300A6E,color:#FFFFFF,stroke-width:2px
+    classDef be fill:#300A6E,stroke:#0496FF,color:#FFFFFF,stroke-width:2px
     classDef db fill:#FB5012,stroke:#300A6E,color:#FFFFFF,stroke-width:2px
-    classDef nodeLight fill:#EBEBEB,stroke:#300A6E,color:#000000
-    classDef nodeWhite fill:#FFFFFF,stroke:#FB5012,color:#000000
+    classDef light fill:#EBEBEB,stroke:#300A6E,color:#000000
+    classDef white fill:#FFFFFF,stroke:#FB5012,color:#000000
 
-    class frontend frontend
-    class backend backend
-    class db db
-    class F1,F2,F3 nodeLight
-    class B1,B2,B3 nodeLight
-    class D1,D2,D3 nodeWhite
-
-    linkStyle 0,1 stroke:#300A6E,stroke-width:2px
-    linkStyle 2,3 stroke:#0496FF,stroke-width:2px
+    class zone_fe fe
+    class zone_be be
+    class zone_db db
+    class F1,F2,F3 light
+    class B1,B2,B3 light
+    class D1,D2,D3 white
 ```
 
 ## Tech Stack
