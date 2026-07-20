@@ -1,0 +1,27 @@
+http:
+  routers:
+    app:
+      rule: "Host(`tracking-success.stage.jonaskrauss.de`)"
+      entryPoints:
+        - websecure
+      service: app-frontend
+      tls:
+        certResolver: letsencrypt
+    app-prod:
+      rule: "Host(`tracking-success.jonaskrauss.de`)"
+      entryPoints:
+        - websecure
+      service: app-frontend
+      tls:
+        certResolver: letsencrypt
+  services:
+    app-frontend:
+      loadBalancer:
+        servers:
+          - url: "http://frontend:80"
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      sniStrict: false
