@@ -46,18 +46,41 @@ The app follows a clean three-tier architecture:
 
 **Architecture:**
 
-```
-┌──────────────────┐     ┌──────────────────────┐     ┌──────────────────┐
-│  React Frontend  │────▶│  FastAPI Backend      │────▶│  PostgreSQL      │
-│  (Vite, TS)      │◀────│  (async SQLAlchemy)   │◀────│  (Docker)        │
-└──────────────────┘     └──────────────────────┘     └──────────────────┘
-       │                        │                            │
-       │ Tailwind CSS           │ JWT Auth                   │ Persistent
-       │ Framer Motion          │ REST API                   │ volumes
-       │ Recharts               │ Pydantic v2
-       ▼                        ▼
-   Card-swipe UI           Metric calculations
-   + Line charts           + Streak engine
+```mermaid
+flowchart LR
+    subgraph Frontend ["🖥️ React Frontend"]
+        direction TB
+        F1[Card-Swipe UI
+Swipe · Input · Animations]
+        F2[Charts
+Recharts line graphs]
+        F3[Auth · Settings
+YAML editor]
+    end
+
+    subgraph Backend ["⚡ FastAPI Backend"]
+        direction TB
+        B1[JWT Auth
+Register · Login · Reset]
+        B2[Metric API
+CRUD · Streaks · History]
+        B3[Calculations
+Sleep · Fasting · Weight]
+    end
+
+    subgraph DB [("🐘 PostgreSQL")]
+        direction TB
+        D1[users]
+        D2[metric_configs]
+        D3[metric_entries]
+    end
+
+    Frontend <-->|REST + JWT| Backend
+    Backend <-->|Async SQLAlchemy| DB
+
+    style Frontend fill:#e8f5e9,stroke:#30974e
+    style Backend fill:#e3f2fd,stroke:#1565c0
+    style DB fill:#fce4ec,stroke:#c62828
 ```
 
 ## Tech Stack
