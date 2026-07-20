@@ -6,10 +6,4 @@ __pycache__/
 dist/
 .venv/
 *.egg-info/
-.env
-*.pyc
-__pycache__/
-.pytest_cache/
-node_modules/
-dist/
-*.egg-info/
+*.tsbuildinfo
