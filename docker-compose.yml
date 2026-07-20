@@ -63,3 +63,8 @@ services:
 volumes:
   postgres_data:
   letsencrypt:
+
+networks:
+  default:
+    external: true
+    name: prod_prod-net
