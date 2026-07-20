@@ -48,35 +48,29 @@ The app follows a clean three-tier architecture:
 
 ```mermaid
 flowchart LR
-    subgraph Frontend ["🖥️ React Frontend"]
+    subgraph Frontend ["React Frontend"]
         direction TB
-        F1[Card-Swipe UI
-Swipe · Input · Animations]
-        F2[Charts
-Recharts line graphs]
-        F3[Auth · Settings
-YAML editor]
+        F1["Card-Swipe UI\nSwipe, Input, Animations"]
+        F2["Charts\nRecharts line graphs"]
+        F3["Auth & Settings\nYAML editor"]
     end
 
-    subgraph Backend ["⚡ FastAPI Backend"]
+    subgraph Backend ["FastAPI Backend"]
         direction TB
-        B1[JWT Auth
-Register · Login · Reset]
-        B2[Metric API
-CRUD · Streaks · History]
-        B3[Calculations
-Sleep · Fasting · Weight]
+        B1["JWT Auth\nRegister, Login, Reset"]
+        B2["Metric API\nCRUD, Streaks, History"]
+        B3["Calculations\nSleep, Fasting, Weight"]
     end
 
-    subgraph DB [("🐘 PostgreSQL")]
+    subgraph DB ["PostgreSQL"]
         direction TB
         D1[users]
         D2[metric_configs]
         D3[metric_entries]
     end
 
-    Frontend <-->|REST + JWT| Backend
-    Backend <-->|Async SQLAlchemy| DB
+    Frontend <-->|"REST + JWT"| Backend
+    Backend <-->|"Async SQLAlchemy"| DB
 
     style Frontend fill:#e8f5e9,stroke:#30974e
     style Backend fill:#e3f2fd,stroke:#1565c0
