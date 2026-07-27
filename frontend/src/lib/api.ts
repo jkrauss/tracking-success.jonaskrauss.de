@@ -68,7 +68,7 @@ export interface TodaySummary {
 export const api = {
   auth: {
     register: (email: string, password: string) =>
-      request<User>('/auth/register', {
+      request<User & { is_active: boolean }>('/auth/register', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }),
@@ -76,6 +76,23 @@ export const api = {
       request<{ access_token: string }>('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
+      }),
+    confirmEmail: (token: string) =>
+      request<{ message: string }>(`/auth/confirm/${token}`),
+    forgotPassword: (email: string) =>
+      request<{ message: string }>('/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      }),
+    resetPasswordConfirm: (token: string, new_password: string) =>
+      request<{ message: string }>('/auth/reset-password/confirm', {
+        method: 'POST',
+        body: JSON.stringify({ token, new_password }),
+      }),
+    resendConfirmation: (email: string) =>
+      request<{ message: string }>('/auth/resend-confirmation', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
       }),
   },
   metrics: {

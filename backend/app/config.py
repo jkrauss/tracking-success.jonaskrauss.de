@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     supabase_url: str = ""
     supabase_anon_key: str = ""
     supabase_service_key: str = ""
+    sweego_api_key: str = ""
+    app_base_url: str = "http://localhost:5173"
+    smtp_from_email: str = "noreply@support.jonaskrauss.de"
+    smtp_from_name: str = "Tracking Success"
 
     class Config:
         env_file = ".env"

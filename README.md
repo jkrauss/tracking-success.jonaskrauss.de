@@ -4,18 +4,30 @@ Persönliche Kennzahlen-Tracking Web-App mit FastAPI Backend und React Frontend.
 
 ## Features
 
-- **Authentifizierung**: Registrierung, Login, Passwort-Reset
+- **Authentifizierung**: Registrierung mit E-Mail-Bestätigung, Login, Passwort-Zurücksetzung
 - **Tägliches Tracking**: Gewicht, Sport, Schlaf, Stimmung, etc.
 - **Erfolgs-Animationen**: Visuelles Feedback bei Erfolg/Misserfolg
 - **Streaks**: Fortlaufende Erfolgsserien mit Meilenstein-Animationen
 - **Liniendiagramme**: Performance über 7, 30 oder 365 Tage
 - **YAML-Konfiguration**: Kennzahlen als YAML exportieren/importieren
 
+## Auth Flows
+
+1. **Registrierung**: POST `/api/auth/register` → erstellt inaktiven User, sendet Bestätigungs-E-Mail via Sweego
+2. **E-Mail bestätigen**: GET `/api/auth/confirm/{token}` → aktiviert den User
+3. **Login**: POST `/api/auth/login` → prüft `is_active`, gibt JWT zurück
+4. **Passwort vergessen**: POST `/api/auth/forgot-password` → sendet Reset-E-Mail (404 wenn E-Mail nicht existiert)
+5. **Passwort zurücksetzen**: POST `/api/auth/reset-password/confirm` → setzt neues Passwort mit Token
+6. **Bestätigung erneut senden**: POST `/api/auth/resend-confirmation` → sendet neue Bestätigungs-E-Mail
+
+Tokens werden als SHA-256 Hash in der DB gespeichert (nie als Klartext). TTL: Bestätigung 24h, Reset 1h.
+
 ## Tech Stack
 
 - **Backend**: Python 3.12, FastAPI, SQLAlchemy, PostgreSQL
 - **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui
 - **Infra**: Docker Compose, Traefik, Let's Encrypt
+- **Email**: Sweego API (transaktionale E-Mails via `support.jonaskrauss.de`)
 
 ## Development
 
@@ -23,8 +35,9 @@ Persönliche Kennzahlen-Tracking Web-App mit FastAPI Backend und React Frontend.
 
 ```bash
 cd backend
-uv venv
-uv pip install -e ".[dev]"
+uv venv --python 3.12
+source .venv/bin/activate
+uv pip install -e ".[dev]" aiosqlite
 uvicorn app.main:app --reload
 ```
 
@@ -40,7 +53,12 @@ pnpm dev
 
 ```bash
 cd backend
-pytest
+source .venv/bin/activate
+export DATABASE_URL="sqlite+aiosqlite:///tmp/test_auth.db"
+export JWT_SECRET="test-secret"
+export SWEEGO_API_KEY="test-key"
+export APP_BASE_URL="http://test"
+python -m pytest
 ```
 
 ## Deployment
@@ -55,7 +73,7 @@ scripts/staging-up.sh tracking-success
 scripts/prod-up.sh tracking-success
 ```
 
-## URL
+## URLs
 
 - **Production**: https://tracking-success.jonaskrauss.de
 - **Staging**: https://tracking-success.stage.jonaskrauss.de
