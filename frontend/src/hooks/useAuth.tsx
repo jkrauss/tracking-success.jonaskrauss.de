@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (email: string, password: string) => {
     await api.auth.register(email, password);
-    await login(email, password);
+    // No auto-login: user must confirm email first
   };
 
   const logout = () => {

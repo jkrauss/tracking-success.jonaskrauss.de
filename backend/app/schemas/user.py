@@ -14,6 +14,7 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: str
+    is_active: bool = False
 
     class Config:
         from_attributes = True
@@ -31,3 +32,19 @@ class PasswordReset(BaseModel):
 class PasswordResetConfirm(BaseModel):
     token: str
     new_password: str
+
+
+class ForgotPassword(BaseModel):
+    email: str
+
+
+class ResendConfirmation(BaseModel):
+    email: str
+
+
+class ConfirmEmailResponse(BaseModel):
+    message: str = "Email confirmed successfully"
+
+
+class EmailConfirmed(BaseModel):
+    message: str = "Email confirmed successfully"

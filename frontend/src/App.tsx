@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { SettingsPage } from '@/pages/SettingsPage';
+import { ConfirmEmailPage } from '@/pages/ConfirmEmailPage';
+import { ResetPasswordPage } from '@/pages/ResetPasswordPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { token, isLoading } = useAuth();
@@ -31,6 +33,8 @@ function AppRoutes() {
         path="/login"
         element={token ? <Navigate to="/" replace /> : <LoginPage />}
       />
+      <Route path="/confirm-email" element={<ConfirmEmailPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route
         path="/"
         element={
