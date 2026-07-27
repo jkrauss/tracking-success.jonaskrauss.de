@@ -24,7 +24,7 @@ export function LoginPage() {
     try {
       if (isRegister) {
         await register(email, password);
-        setInfo('Bestätigungs-E-Mail wurde gesendet. Bitte überprüfe dein Postfach und klicke auf den Link, um dein Konto zu aktivieren.');
+        setInfo('Du bekommst gleich eine Bestätigungs-E-Mail. Klicke auf den Link darin — dann kannst du dich einloggen.');
       } else {
         await login(email, password);
       }
