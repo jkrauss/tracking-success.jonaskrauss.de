@@ -29,9 +29,12 @@ export function LoginPage() {
         await login(email, password);
       }
     } catch (err: any) {
-      setError(err.message || 'Authentifizierung fehlgeschlagen');
-      if (err.message && err.message.includes('nicht bestätigt')) {
+      const statusCode = err.message?.match(/(\d{3})/)?.[1];
+      if (statusCode === '403') {
+        setError('E-Mail nicht bestätigt. Bitte überprüfe dein Postfach.');
         setShowResend(true);
+      } else {
+        setError(err.message || 'Authentifizierung fehlgeschlagen');
       }
     } finally {
       setLoading(false);
@@ -50,7 +53,7 @@ export function LoginPage() {
       await api.auth.forgotPassword(email);
       setInfo('Wenn die E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen gesendet.');
     } catch (err: any) {
-      if (err.message && err.message.includes('not found')) {
+      if (err.message?.includes('not found')) {
         setError('Diese E-Mail-Adresse ist nicht registriert.');
       } else {
         setError(err.message || 'Anfrage fehlgeschlagen');

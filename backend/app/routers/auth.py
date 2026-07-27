@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -18,6 +19,8 @@ from app.services.auth import (
     hash_token, generate_token,
 )
 from app.services.email import send_email
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 security = HTTPBearer(auto_error=False)
@@ -66,15 +69,6 @@ async def get_current_user_id(
     if not result.scalar_one_or_none():
         raise HTTPException(status_code=401, detail="User not found")
     return user_id
-
-
-async def get_current_user(
-    user_id: int = Depends(get_current_user_id),
-    db: AsyncSession = Depends(get_db),
-) -> User:
-    """Dependency to get current authenticated user."""
-    result = await db.execute(select(User).where(User.id == user_id))
-    return result.scalar_one()
 
 
 def _build_confirm_body(raw_token: str) -> str:
@@ -139,7 +133,7 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     if not user.is_active:
         raise HTTPException(
             status_code=403,
-            detail="E-Mail nicht bestätigt. Bitte überprüfe dein Postfach."
+            detail="Email not confirmed"
         )
     token = create_access_token({"sub": str(user.id)})
     return {"access_token": token}
@@ -176,6 +170,8 @@ async def forgot_password(data: ForgotPassword, db: AsyncSession = Depends(get_d
     result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
     if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
 
     raw_token = generate_token()
@@ -215,6 +211,19 @@ async def confirm_password_reset(data: PasswordResetConfirm, db: AsyncSession = 
 
     user.hashed_password = get_password_hash(data.new_password)
     email_token.used_at = _utcnow()
+
+    # Invalidate all other unused reset tokens for this user (Kilo review fix)
+    siblings = await db.execute(
+        select(EmailToken).where(
+            EmailToken.user_id == user.id,
+            EmailToken.token_type == "reset",
+            EmailToken.used_at.is_(None),
+            EmailToken.id != email_token.id,
+        )
+    )
+    for sibling in siblings.scalars():
+        sibling.used_at = _utcnow()
+
     await db.flush()
     return {"message": "Password updated successfully"}
 
@@ -243,5 +252,9 @@ async def resend_confirmation(data: ResendConfirmation, db: AsyncSession = Depen
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_me(user: User = Depends(get_current_user)):
+async def get_me(user_id: int = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
     return user

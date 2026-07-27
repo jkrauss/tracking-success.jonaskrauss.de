@@ -3,7 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.database import engine, Base
+from app.config import settings
 from app.routers import auth, metrics, yaml_config
+
+ALLOWED_ORIGINS = [
+    settings.app_base_url,
+    "http://localhost:5173",
+    "http://localhost:8000",
+]
 
 
 @asynccontextmanager
@@ -17,13 +24,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Tracking Success",
     description="Personal metrics tracker",
-    version="0.1.0",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
