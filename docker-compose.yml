@@ -21,9 +21,13 @@ services:
       dockerfile: Dockerfile
     container_name: tracking-success-backend
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/tracking
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      SWEEGO_API_KEY: ${SWEEGO_API_KEY:-}
+      APP_BASE_URL: ${APP_BASE_URL:-https://tracking-success.jonaskrauss.de}
     depends_on:
       db:
         condition: service_healthy
