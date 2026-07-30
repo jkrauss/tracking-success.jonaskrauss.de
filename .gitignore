@@ -8,3 +8,6 @@ dist/
 *.egg-info/
 *.tsbuildinfotmp/
 backend/tmp/
+
+# Graphify
+graphify-out/

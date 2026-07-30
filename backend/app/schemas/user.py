@@ -25,10 +25,6 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
-class PasswordReset(BaseModel):
-    email: str
-
-
 class PasswordResetConfirm(BaseModel):
     token: str
     new_password: str
@@ -42,9 +38,3 @@ class ResendConfirmation(BaseModel):
     email: str
 
 
-class ConfirmEmailResponse(BaseModel):
-    message: str = "Email confirmed successfully"
-
-
-class EmailConfirmed(BaseModel):
-    message: str = "Email confirmed successfully"

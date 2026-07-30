@@ -21,3 +21,12 @@ def compute_fasting(breakfast: time, dinner: time) -> float:
     else:
         fasting = timedelta(hours=24) - (din - brk)
     return fasting.total_seconds() / 3600
+
+
+def compute_duration(start: time, end: time) -> float:
+    """Calculate duration in hours between two same-day times."""
+    s = timedelta(hours=start.hour, minutes=start.minute)
+    e = timedelta(hours=end.hour, minutes=end.minute)
+    if e < s:
+        e += timedelta(days=1)
+    return (e - s).total_seconds() / 3600

@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.metric import MetricConfig, MetricEntry
-from app.models.user import User
 from app.schemas.metric import (
     MetricConfigCreate, MetricConfigResponse,
     MetricEntryCreate, MetricEntryResponse, MetricHistory

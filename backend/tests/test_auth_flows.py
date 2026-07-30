@@ -125,7 +125,7 @@ class TestLoginGate:
         })
         assert resp.status_code == 403
         detail = resp.json()["detail"].lower()
-        assert "confirm" in detail or "active" in detail or "bestätigt" in detail
+        assert "confirm" in detail or "active" in detail or "confirmed" in detail
 
     @pytest.mark.asyncio
     async def test_login_works_for_active_user(self, client):

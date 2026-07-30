@@ -20,11 +20,11 @@ export function ConfirmEmailPage() {
       .confirmEmail(token)
       .then(() => {
         setStatus('success');
-        setMessage('Deine E-Mail-Adresse wurde bestätigt. Du kannst dich jetzt anmelden.');
+        setMessage('Your email has been confirmed. You can now sign in.');
       })
       .catch((err) => {
         setStatus('error');
-        setMessage(err.message || 'Bestätigung fehlgeschlagen.');
+        setMessage(err.message || 'Confirmation failed.');
       });
   }, [params]);
 
@@ -32,11 +32,11 @@ export function ConfirmEmailPage() {
     <div className="h-[100dvh] flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="text-xl text-center">E-Mail bestätigen</CardTitle>
+          <CardTitle className="text-xl text-center">Confirm email</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {status === 'loading' && (
-            <p className="text-center text-sm text-muted-foreground">Wird bestätigt…</p>
+            <p className="text-center text-sm text-muted-foreground">Confirming…</p>
           )}
           {status === 'success' && (
             <>
@@ -45,7 +45,7 @@ export function ConfirmEmailPage() {
                 className="w-full text-sm text-primary hover:underline"
                 onClick={() => navigate('/login')}
               >
-                Zur Anmeldung →
+                Go to sign in →
               </button>
             </>
           )}

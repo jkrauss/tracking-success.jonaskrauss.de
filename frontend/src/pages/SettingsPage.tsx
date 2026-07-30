@@ -55,7 +55,7 @@ export function SettingsPage() {
   };
 
   const handleDeleteConfig = async (id: number) => {
-    if (!confirm('Kennzahl wirklich löschen?')) return;
+    if (!confirm('Delete this metric?')) return;
     try {
       await api.metrics.deleteConfig(id);
       await loadConfigs();
@@ -67,7 +67,7 @@ export function SettingsPage() {
   const handleAddConfig = async () => {
     try {
       await api.metrics.createConfig({
-        name: 'Neue Kennzahl',
+        name: 'New metric',
         slug: `new-metric-${Date.now()}`,
         metric_type: 'bool',
         has_goal: true,
@@ -97,7 +97,7 @@ export function SettingsPage() {
           </Button>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Settings className="w-8 h-8" />
-            Einstellungen
+            Settings
           </h1>
         </div>
         <div className="flex gap-2">
@@ -105,7 +105,7 @@ export function SettingsPage() {
             variant={activeTab === 'visual' ? 'default' : 'outline'}
             onClick={() => setActiveTab('visual')}
           >
-            Visuell
+            Visual
           </Button>
           <Button
             variant={activeTab === 'yaml' ? 'default' : 'outline'}
@@ -121,7 +121,7 @@ export function SettingsPage() {
           <div className="flex justify-end">
             <Button onClick={handleAddConfig}>
               <Plus className="w-4 h-4 mr-2" />
-              Neue Kennzahl
+              New metric
             </Button>
           </div>
 
@@ -146,8 +146,11 @@ export function SettingsPage() {
                     >
                       <option value="bool">Ja/Nein</option>
                       <option value="float">Zahl</option>
-                      <option value="sleep">Schlaf</option>
-                      <option value="weight">Gewicht</option>
+                      <option value="sleep">Sleep</option>
+                      <option value="weight">Weight</option>
+                      <option value="fasting">Fasting</option>
+                      <option value="meditation">Meditation</option>
+                      <option value="work">Work</option>
                       <option value="fasting">Fasten</option>
                     </select>
                     <div className="flex items-center gap-2">
@@ -159,7 +162,7 @@ export function SettingsPage() {
                         }
                         className="h-4 w-4"
                       />
-                      <span className="text-sm">Ziel</span>
+                      <span className="text-sm">Goal</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -179,7 +182,7 @@ export function SettingsPage() {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>YAML-Konfiguration</CardTitle>
+            <CardTitle>YAML configuration</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <textarea
@@ -191,7 +194,7 @@ export function SettingsPage() {
             <div className="flex gap-2">
               <Button onClick={handleSaveYaml} disabled={saving}>
                 <Save className="w-4 h-4 mr-2" />
-                {saving ? 'Speichern...' : 'Speichern'}
+                {saving ? 'Saving...' : 'Save'}
               </Button>
               <Button
                 variant="outline"
@@ -205,7 +208,7 @@ export function SettingsPage() {
                 }}
               >
                 <FileDown className="w-4 h-4 mr-2" />
-                Exportieren
+                Export
               </Button>
             </div>
           </CardContent>

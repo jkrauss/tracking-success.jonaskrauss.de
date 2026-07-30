@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.metric import MetricConfig, MetricEntry
 from app.schemas.metric import MetricEntryCreate
-from app.calculations import compute_sleep, compute_fasting
+from app.calculations import compute_sleep, compute_fasting, compute_duration
 
 
 async def compute_success(
@@ -21,6 +21,12 @@ async def compute_success(
     if config.calculation == "sleep_duration":
         if entry_data.value_time_1 and entry_data.value_time_2:
             computed = compute_sleep(entry_data.value_time_1, entry_data.value_time_2)
+            if config.has_goal and config.goal_value:
+                success = computed >= config.goal_value
+
+    elif config.calculation == "same_day_duration":
+        if entry_data.value_time_1 and entry_data.value_time_2:
+            computed = compute_duration(entry_data.value_time_1, entry_data.value_time_2)
             if config.has_goal and config.goal_value:
                 success = computed >= config.goal_value
 
@@ -74,6 +80,7 @@ async def get_streak(db: AsyncSession, config_id: int, user_id: int) -> int:
             )
         )
         .order_by(MetricEntry.entry_date.desc())
+        .limit(400)  # ponytail: enough for any realistic streak
     )
     entries = result.scalars().all()
 

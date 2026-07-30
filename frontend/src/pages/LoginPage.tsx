@@ -24,14 +24,14 @@ export function LoginPage() {
     try {
       if (isRegister) {
         await register(email, password);
-        setInfo('Du bekommst gleich eine Bestätigungs-E-Mail. Klicke auf den Link darin — dann kannst du dich einloggen.');
+        setInfo('You will receive a confirmation email shortly. Click the link inside to log in.');
       } else {
         await login(email, password);
       }
     } catch (err: any) {
       const statusCode = err.message?.match(/(\d{3})/)?.[1];
       if (statusCode === '403') {
-        setError('E-Mail nicht bestätigt. Bitte überprüfe dein Postfach.');
+        setError('Email not confirmed. Please check your inbox.');
         setShowResend(true);
       } else {
         setError(err.message || 'Authentifizierung fehlgeschlagen');
@@ -51,7 +51,7 @@ export function LoginPage() {
     setLoading(true);
     try {
       await api.auth.forgotPassword(email);
-      setInfo('Wenn die E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen gesendet.');
+      setInfo('If the email address exists, a reset link has been sent.');
     } catch (err: any) {
       if (err.message?.includes('not found')) {
         setError('Diese E-Mail-Adresse ist nicht registriert.');
@@ -70,7 +70,7 @@ export function LoginPage() {
     setLoading(true);
     try {
       await api.auth.resendConfirmation(email);
-      setInfo('Bestätigungs-E-Mail wurde erneut gesendet. Bitte überprüfe dein Postfach.');
+      setInfo('Confirmation email has been resent. Please check your inbox.');
       setShowResend(false);
     } catch (err: any) {
       setError(err.message || 'Erneutes Senden fehlgeschlagen');
@@ -84,7 +84,7 @@ export function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl text-center">
-            {isRegister ? 'Konto erstellen' : 'Anmelden'}
+            {isRegister ? 'Create account' : 'Sign in'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -100,7 +100,7 @@ export function LoginPage() {
             />
             <Input
               type="password"
-              placeholder="Passwort"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="h-10"
@@ -114,11 +114,11 @@ export function LoginPage() {
                 onClick={handleResendConfirmation}
                 disabled={loading}
               >
-                Bestätigungs-E-Mail erneut senden
+                Resend confirmation email
               </button>
             )}
             <Button type="submit" className="w-full h-10" disabled={loading}>
-              {loading ? '...' : isRegister ? 'Registrieren' : 'Anmelden'}
+              {loading ? '...' : isRegister ? 'Register' : 'Sign in'}
             </Button>
             {!isRegister && (
               <button
@@ -127,7 +127,7 @@ export function LoginPage() {
                 onClick={handleForgotPassword}
                 disabled={loading}
               >
-                Passwort vergessen?
+                Forgot password?
               </button>
             )}
             <Button
@@ -141,7 +141,7 @@ export function LoginPage() {
                 setShowResend(false);
               }}
             >
-              {isRegister ? 'Bereits ein Konto? Anmelden' : 'Neues Konto erstellen'}
+              {isRegister ? 'Already have an account? Sign in' : 'Create new account'}
             </Button>
           </form>
         </CardContent>

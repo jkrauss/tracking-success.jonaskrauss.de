@@ -20,10 +20,10 @@ export function ResetPasswordPage() {
       <div className="h-[100dvh] flex items-center justify-center bg-background px-4">
         <Card className="w-full max-w-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-xl text-center">Passwort zurücksetzen</CardTitle>
+            <CardTitle className="text-xl text-center">Reset password</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-center text-sm text-destructive">Kein Token gefunden.</p>
+            <p className="text-center text-sm text-destructive">No token found.</p>
           </CardContent>
         </Card>
       </div>
@@ -35,11 +35,11 @@ export function ResetPasswordPage() {
     setError('');
 
     if (newPassword.length < 6) {
-      setError('Passwort muss mindestens 6 Zeichen lang sein.');
+      setError('Password must be at least 6 characters long.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError('Passwörter stimmen nicht überein.');
+      setError('Passwords do not match.');
       return;
     }
 
@@ -48,7 +48,7 @@ export function ResetPasswordPage() {
       await api.auth.resetPasswordConfirm(token, newPassword);
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || 'Zurücksetzen fehlgeschlagen.');
+      setError(err.message || 'Reset failed.');
     } finally {
       setLoading(false);
     }
@@ -58,26 +58,26 @@ export function ResetPasswordPage() {
     <div className="h-[100dvh] flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="text-xl text-center">Passwort zurücksetzen</CardTitle>
+          <CardTitle className="text-xl text-center">Reset password</CardTitle>
         </CardHeader>
         <CardContent>
           {success ? (
             <div className="space-y-4">
               <p className="text-center text-sm text-green-600">
-                Dein Passwort wurde zurückgesetzt. Du kannst dich jetzt anmelden.
+                Your password has been reset. You can now sign in.
               </p>
               <button
                 className="w-full text-sm text-primary hover:underline"
                 onClick={() => navigate('/login')}
               >
-                Zur Anmeldung →
+                Go to sign in →
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
               <Input
                 type="password"
-                placeholder="Neues Passwort"
+                placeholder="New password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="h-10"
@@ -85,7 +85,7 @@ export function ResetPasswordPage() {
               />
               <Input
                 type="password"
-                placeholder="Passwort wiederholen"
+                placeholder="Confirm password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="h-10"
@@ -93,7 +93,7 @@ export function ResetPasswordPage() {
               />
               {error && <p className="text-destructive text-xs">{error}</p>}
               <Button type="submit" className="w-full h-10" disabled={loading}>
-                {loading ? '...' : 'Passwort zurücksetzen'}
+                {loading ? '...' : 'Reset password'}
               </Button>
             </form>
           )}

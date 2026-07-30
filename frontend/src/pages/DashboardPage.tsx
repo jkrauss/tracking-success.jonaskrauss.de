@@ -208,11 +208,11 @@ export function DashboardPage() {
         ) : (
           <Card className="p-6 text-center">
             <p className="text-muted-foreground mb-3 text-sm">
-              Noch keine Kennzahlen konfiguriert.
+              No metrics configured yet.
             </p>
             <Button size="sm" onClick={() => navigate('/settings')}>
               <Plus className="w-4 h-4 mr-1" />
-              Einrichten
+              Set up
             </Button>
           </Card>
         )}

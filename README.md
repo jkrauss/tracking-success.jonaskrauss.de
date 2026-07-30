@@ -1,100 +1,76 @@
-# Tracking Success 📊
+# tracking-success.jonaskrauss.de
 
-Persönliche Kennzahlen-Tracking Web-App mit FastAPI Backend und React Frontend.
+Personal daily metrics tracker — track habits, moods, sleep, fasting, meditation, and more.
 
 ## Features
 
-- **Authentifizierung**: Registrierung mit E-Mail-Bestätigung, Login, Passwort-Zurücksetzung
-- **Tägliches Tracking**: Gewicht, Sport, Schlaf, Stimmung, etc.
-- **Erfolgs-Animationen**: Visuelles Feedback bei Erfolg/Misserfolg
-- **Streaks**: Fortlaufende Erfolgsserien mit Meilenstein-Animationen
-- **Liniendiagramme**: Performance über 7, 30 oder 365 Tage
-- **YAML-Konfiguration**: Kennzahlen als YAML exportieren/importieren
+- 11 customizable metric types (bool, float, percent, sleep, fasting, meditation, work duration, weight)
+- Goal tracking with streaks and celebrations
+- Weekly charts and 30-day success rate
+- Mobile-first, dark-mode UI
+- Email-based auth with password reset
+- YAML config export/import
 
-## Auth Flows
+## Stack
 
-1. **Registrierung**: POST `/api/auth/register` → erstellt inaktiven User, sendet Bestätigungs-E-Mail via Sweego
-2. **E-Mail bestätigen**: GET `/api/auth/confirm/{token}` → aktiviert den User
-3. **Login**: POST `/api/auth/login` → prüft `is_active`, gibt JWT zurück
-4. **Passwort vergessen**: POST `/api/auth/forgot-password` → sendet Reset-E-Mail (404 wenn E-Mail nicht existiert)
-5. **Passwort zurücksetzen**: POST `/api/auth/reset-password/confirm` → setzt neues Passwort mit Token
-6. **Bestätigung erneut senden**: POST `/api/auth/resend-confirmation` → sendet neue Bestätigungs-E-Mail
-
-Tokens werden als SHA-256 Hash in der DB gespeichert (nie als Klartext). TTL: Bestätigung 24h, Reset 1h.
-
-## Tech Stack
-
-- **Backend**: Python 3.12, FastAPI, SQLAlchemy, PostgreSQL
-- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui
-- **Infra**: Docker Compose, Traefik, Let's Encrypt
-- **Email**: Sweego API (transaktionale E-Mails via `support.jonaskrauss.de`)
+- **Backend:** Python 3.12, FastAPI, SQLAlchemy async, PostgreSQL
+- **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui
+- **Infra:** Docker Compose, Traefik, Let's Encrypt
 
 ## Development
 
-### Backend
-
 ```bash
+# Backend
 cd backend
-uv venv --python 3.12
-source .venv/bin/activate
-uv pip install -e ".[dev]" aiosqlite
+pip install -e .
 uvicorn app.main:app --reload
-```
 
-### Frontend
-
-```bash
+# Frontend
 cd frontend
 pnpm install
 pnpm dev
 ```
 
-### Tests
+## Testing
 
 ```bash
 cd backend
-source .venv/bin/activate
-export DATABASE_URL="sqlite+aiosqlite:///tmp/test_auth.db"
-export JWT_SECRET="test-secret"
-export SWEEGO_API_KEY="test-key"
-export APP_BASE_URL="http://test"
-python -m pytest
+DATABASE_URL="sqlite+aiosqlite:///tmp/test.db" \
+JWT_SECRET=test-secret \
+SWEEGO_API_KEY=test-key \
+APP_BASE_URL=http://test \
+python -m pytest -v
 ```
 
 ## Deployment
 
-Die App wird über Hermine auf den Hetzner VPS deployed:
+Managed via [Hermine](https://hermine.dev) DevOps operator.
+
+| Environment | Domain | Server |
+|-------------|--------|--------|
+| Staging | tracking-success.stage.jonaskrauss.de | Hetzner CX22 |
+| Production | tracking-success.jonaskrauss.de | Hetzner CX22 |
 
 ```bash
-# Staging
-scripts/staging-up.sh tracking-success
+# Deploy staging
+hermine deploy --env staging
 
-# Production
-scripts/prod-up.sh tracking-success
+# Deploy production
+hermine deploy --env production
 ```
 
-## URLs
+## Architecture
 
-- **Production**: https://tracking-success.jonaskrauss.de
-- **Staging**: https://tracking-success.stage.jonaskrauss.de
+Single-container FastAPI app behind Traefik reverse proxy. PostgreSQL on host. Let's Encrypt TLS termination.
 
-## Kennzahlen
+```mermaid
+flowchart TD
+    A[Browser] --> B[Traefik]
+    B --> C[FastAPI Container]
+    C --> D[(PostgreSQL)]
+    C --> E[Sweego Email API]
+```
 
-| Kennzahl | Typ | Berechnung | Ziel |
-|----------|-----|------------|------|
-| Schlaf | sleep | Aufstehzeit - Bettzeit - 1h | ≥ 7h |
-| Einstellarbeit | bool | - | Erledigt |
-| Morgenrunde | bool | - | Erledigt |
-| Sport | bool | - | Erledigt |
-| 2h Fokus | bool | - | Erledigt |
-| Plan für Morgen | bool | - | Erledigt |
-| Kein Youtube | bool | - | Erledigt |
-| Stimmung | float | - | - |
-| Fokus | float | - | - |
-| Gewicht | weight | Heute < Gestern | Abgenommen |
-| Fastenzeit | fasting | Abendessen → Frühstück | ≥ 15h |
+## License
 
-## Streak-Meilensteine
-
-Bei Erreichen dieser Streak-Längen wird eine Animation abgespielt:
-3, 7, 14, 30, 60, 90, 183, 365 Tage
+Private — personal use only.

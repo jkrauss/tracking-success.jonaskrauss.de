@@ -65,7 +65,7 @@ export function MetricCard({ config, onSuccess }: MetricCardProps) {
         data.value_bool = boolValue;
       } else if (config.metric_type === 'float' || config.metric_type === 'weight') {
         data.value_float = parseFloat(floatValue) || 0;
-      } else if (config.metric_type === 'sleep' || config.metric_type === 'fasting') {
+      } else if (config.metric_type === 'sleep' || config.metric_type === 'fasting' || config.metric_type === 'meditation' || config.metric_type === 'work') {
         data.value_time_1 = time1 || null;
         data.value_time_2 = time2 || null;
       }
@@ -106,7 +106,7 @@ export function MetricCard({ config, onSuccess }: MetricCardProps) {
           className="w-full h-10 text-sm"
           onClick={() => setBoolValue(!boolValue)}
         >
-          {boolValue ? '✓ Erledigt' : '✗ Nicht erledigt'}
+          {boolValue ? '✓ Done' : '✗ Not done'}
         </Button>
       );
     }
@@ -125,25 +125,30 @@ export function MetricCard({ config, onSuccess }: MetricCardProps) {
       );
     }
 
-    if (config.metric_type === 'sleep' || config.metric_type === 'fasting') {
+    if (config.metric_type === 'sleep' || config.metric_type === 'fasting' || config.metric_type === 'meditation' || config.metric_type === 'work') {
       const isSleep = config.metric_type === 'sleep';
+      const isFasting = config.metric_type === 'fasting';
+      const isMeditation = config.metric_type === 'meditation';
+      const isWork = config.metric_type === 'work';
+      const label1 = isSleep ? 'Bedtime' : isFasting ? 'Dinner' : isMeditation ? 'Start' : isWork ? 'Start' : 'Time 1';
+      const label2 = isSleep ? 'Wake time' : isFasting ? 'Breakfast' : isMeditation ? 'End' : isWork ? 'End' : 'Time 2';
       return (
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="text-xs text-muted-foreground mb-0.5 block">{isSleep ? 'Bettzeit' : 'Abendessen'}</label>
+            <label className="text-xs text-muted-foreground mb-0.5 block">{label1}</label>
             <Input
               type="time"
-              value={isSleep ? time1 : time2}
-              onChange={(e) => isSleep ? setTime1(e.target.value) : setTime2(e.target.value)}
+              value={isFasting ? time2 : time1}
+              onChange={(e) => isFasting ? setTime2(e.target.value) : setTime1(e.target.value)}
               className="h-10 text-sm"
             />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-0.5 block">{isSleep ? 'Aufstehzeit' : 'Frühstück'}</label>
+            <label className="text-xs text-muted-foreground mb-0.5 block">{label2}</label>
             <Input
               type="time"
-              value={isSleep ? time2 : time1}
-              onChange={(e) => isSleep ? setTime2(e.target.value) : setTime1(e.target.value)}
+              value={isFasting ? time1 : time2}
+              onChange={(e) => isFasting ? setTime1(e.target.value) : setTime2(e.target.value)}
               className="h-10 text-sm"
             />
           </div>
@@ -229,7 +234,7 @@ export function MetricCard({ config, onSuccess }: MetricCardProps) {
             >
               <Flame className="w-14 h-14 text-orange-500 mx-auto mb-1" />
               <p className="text-xl font-bold text-orange-500">
-                🔥 {streakMilestone} Tage!
+                🔥 {streakMilestone} days!
               </p>
             </motion.div>
           </motion.div>
@@ -264,7 +269,7 @@ export function MetricCard({ config, onSuccess }: MetricCardProps) {
             size="sm"
             className="flex-1 h-9"
           >
-            {submitting ? '...' : 'Speichern'}
+            {submitting ? '...' : 'Save'}
           </Button>
           <div className="flex gap-0.5">
             {[7, 30, 365].map((days) => (

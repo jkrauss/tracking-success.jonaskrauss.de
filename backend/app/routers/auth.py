@@ -35,13 +35,11 @@ def _utcnow() -> datetime:
 
 
 def _is_expired(expires_at: datetime, now: datetime) -> bool:
-    """Check if a token is expired, handling both aware and naive datetimes."""
-    if expires_at.tzinfo is not None:
-        if now.tzinfo is None:
-            now = now.replace(tzinfo=timezone.utc)
-    else:
-        if now.tzinfo is not None:
-            now = now.replace(tzinfo=None)
+    # SQLite returns naive datetimes; PostgreSQL returns aware. Normalize.
+    if expires_at.tzinfo is None and now.tzinfo is not None:
+        now = now.replace(tzinfo=None)
+    elif expires_at.tzinfo is not None and now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
     return expires_at <= now
 
 
@@ -50,7 +48,7 @@ def _validate_password(password: str) -> None:
     if len(password) < MIN_PASSWORD_LEN:
         raise HTTPException(
             status_code=400,
-            detail=f"Passwort muss mindestens {MIN_PASSWORD_LEN} Zeichen lang sein."
+            detail=f"Password must be at least {MIN_PASSWORD_LEN} characters long."
         )
 
 
@@ -74,26 +72,26 @@ async def get_current_user_id(
 def _build_confirm_body(raw_token: str) -> str:
     link = f"{settings.app_base_url}/confirm-email?token={raw_token}"
     return (
-        f"Willkommen bei Tracking Success!\n\n"
-        f"Bitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n"
+        f"Welcome to Tracking Success!\n\n"
+        f"Please confirm your email address by clicking the link below:\n"
         f"{link}\n\n"
-        f"Dieser Link ist 24 Stunden gültig."
+        f"This link is valid for 24 hours."
     )
 
 
 def _build_reset_body(raw_token: str) -> str:
     link = f"{settings.app_base_url}/reset-password?token={raw_token}"
     return (
-        f"Du hast ein neues Passwort angefordert.\n\n"
-        f"Klicke auf den folgenden Link, um dein Passwort zurückzusetzen:\n"
+        f"You requested a new password.\n\n"
+        f"Click the link below to reset your password:\n"
         f"{link}\n\n"
-        f"Falls du das nicht warst, kannst du diese E-Mail ignorieren.\n"
-        f"Dieser Link ist 1 Stunde gültig."
+        f"If this wasn't you, you can ignore this email.\n"
+        f"This link is valid for 1 hour."
     )
 
 
-CONFIRM_SUBJECT = "E-Mail bestätigen — Tracking Success"
-RESET_SUBJECT = "Passwort zurücksetzen — Tracking Success"
+CONFIRM_SUBJECT = "Confirm your email — Tracking Success"
+RESET_SUBJECT = "Reset your password — Tracking Success"
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
