@@ -71,7 +71,7 @@ Conventions for AI assistants working in this repository.
 - **SSH:** `root@167.233.126.82 -i ~/.ssh/hermine_deploy`
 - **Deploy:** rsync code → `docker compose up -d --build` in `/opt/prod/tracking-success/`
 - **Network:** `prod_prod-net` (shared Traefik)
-- **DB:** PostgreSQL in Docker volume (persistent — NEVER delete without explicit user approval)
+- **DB:** `postgres-shared` (gemeinsame Postgres-16-Instanz auf prod-vps, Container `postgres-shared`, DB `tracking`, User `tracking` — seit 2026-09-04; alter Container `tracking-success-db` bleibt als Notfall-Rollback laufen bis mind. 2026-09-11). Persistent — NEVER delete without explicit user approval.
 
 ### Schema Migrations
 
